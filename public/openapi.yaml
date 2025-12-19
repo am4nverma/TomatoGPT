@@ -1,0 +1,71 @@
+openapi: 3.0.1
+info:
+  title: Tomato Food Ordering
+  description: API for ordering food from local restaurants.
+  version: 'v1'
+servers:
+  - url: https://chasmal-cytotropic-skye.ngrok-free.dev
+paths:
+  /api/search:
+    get:
+      operationId: searchRestaurants
+      summary: Search for restaurants or food items.
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          required: true
+          description: Search query (e.g., "pizza", "italian").
+      responses:
+        '200':
+          description: List of restaurants matching the query.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    cuisine:
+                      type: array
+                      items:
+                        type: string
+                    description:
+                      type: string
+
+  /api/restaurants/{id}/menu:
+    get:
+      operationId: getRestaurantMenu
+      summary: Get the menu for a specific restaurant.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The ID of the restaurant.
+      responses:
+        '200':
+          description: Menu items for the restaurant.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    price:
+                      type: number
+                    description:
+                      type: string
+                    image:
+                      type: string

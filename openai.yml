@@ -1,0 +1,91 @@
+openapi: 3.1.0
+info:
+  title: TomatoGPT Restaurant API
+  description: API for searching restaurants and viewing menus
+  version: 1.0.0
+servers:
+  - url: https://chasmal-cytotropic-skye.ngrok-free.dev
+    description: Production server (ngrok)
+paths:
+  /api/search:
+    get:
+      operationId: searchRestaurants
+      summary: Search for restaurants
+      description: Search restaurants by cuisine, name, or food type
+      parameters:
+        - name: q
+          in: query
+          description: Search query (e.g., "italian", "burger", "sushi")
+          required: false
+          schema:
+            type: string
+            default: ""
+      responses:
+        '200':
+          description: List of restaurants
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  visual_mode:
+                    type: boolean
+                    description: Indicates this response should be rendered visually
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        title:
+                          type: string
+                        subtitle:
+                          type: string
+                        imageUrl:
+                          type: string
+                        meta:
+                          type: string
+                        cta:
+                          type: object
+                          properties:
+                            text:
+                              type: string
+                            action:
+                              type: string
+                            value:
+                              type: string
+  /api/restaurants/{id}/menu:
+    get:
+      operationId: getRestaurantMenu
+      summary: Get restaurant menu
+      description: Retrieve the full menu for a specific restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Restaurant ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Restaurant menu items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    description:
+                      type: string
+                    price:
+                      type: number
+                    image:
+                      type: string
+                    category:
+                      type: string

@@ -5,9 +5,20 @@ import { ShoppingBag, Search } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { cn } from "@/lib/utils";
 
+import { trackEvent, AnalyticsEvents } from "@/lib/moengage";
+
 export function Header() {
     const { items } = useCart();
     const count = items.reduce((sum, i) => sum + i.quantity, 0);
+
+    const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            const query = e.currentTarget.value;
+            if (query.trim()) {
+                trackEvent(AnalyticsEvents.SEARCH, { query });
+            }
+        }
+    };
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-md">
@@ -22,6 +33,7 @@ export function Header() {
                         <input
                             type="text"
                             placeholder="Search for restaurants, cuisine or a dish..."
+                            onKeyDown={handleSearch}
                             className="w-full rounded-lg border bg-gray-50 pl-9 py-2 text-sm outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
                         />
                     </div>

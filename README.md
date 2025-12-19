@@ -23,8 +23,9 @@ A Next.js food delivery application clone integrated with OpenAI Apps SDK (MCP).
    ```
 
 ### Running Locally
+To run the app (using the local Node.js environment if global is missing):
 ```bash
-npm run dev
+./dev.sh
 ```
 Open [http://localhost:3000](http://localhost:3000) to view the web app.
 
@@ -32,17 +33,22 @@ Open [http://localhost:3000](http://localhost:3000) to view the web app.
 
 This app exposes an MCP (Model Context Protocol) server to be used as a ChatGPT App.
 
-### Endpoints
-- **MCP Server (SSE)**: `/api/mcp` (e.g., `https://your-domain.com/api/mcp`)
-- **Widget UI**: `/widget` (e.g., `https://your-domain.com/widget`)
+### Development Setup (Recommended)
+Since Vercel Serverless Functions have timeouts incompatible with MCP SSE (Server-Sent Events), use **ngrok** for testing.
 
-### How to Add to ChatGPT
-1. Deploy this app to a public URL (e.g., Vercel, ngrok to localhost).
-2. Go to **ChatGPT Settings** -> **Apps & Connectors** -> **Advanced settings** -> Enable **Developer Mode**.
-3. Go to **Settings** -> **Connectors** -> **Create**.
-4. Enter your MCP Endpoint URL: `https://<your-domain>/api/mcp`.
-5. ChatGPT will detect the tools (`search_restaurants`, `get_restaurant_menu`).
-6. Configure the **Widget URL** if prompted or use the tools normally.
+1. Start the app: `./dev.sh`
+2. Start ngrok: `ngrok http 3000`
+3. Copy the ngrok HTTPS URL (e.g., `https://your-tunel.ngrok-free.app`).
+
+### Connecting to ChatGPT
+1. Go to **Settings** -> **Apps & Connectors** -> **Advanced settings** -> Enable **Developer Mode**.
+2. Go to **Settings** -> **Connectors** -> **Create**.
+3. **MCP Endpoint URL**: `https://<your-ngrok-id>.ngrok-free.app/api/mcp`
+4. **Authentication**: None.
+
+### Troubleshooting
+- **500 Error**: Ensure `bodyParser` is disabled in `pages/api/mcp.ts` (Next.js config).
+- **401 Error on Vercel**: Disable "Employment Protection" or Vercel Authentication in your Vercel Dashboard.
 
 ### MoEngage Integration
 To enable real analytics:

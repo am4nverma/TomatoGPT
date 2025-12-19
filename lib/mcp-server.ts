@@ -8,11 +8,24 @@ import { RESTAURANTS } from "./data";
 // For production, this should be outside or stateless.
 // Since we are using SSE, the transport connection is persistent per session.
 
+let CURRENT_DEVICE_ID: string | null = null;
+
 export const createMcpServer = () => {
     const server = new McpServer({
         name: "TomatoGPT",
         version: "1.0.0",
     });
+
+    server.tool(
+        "set_device_id",
+        { device_id: z.string().describe("The MoEngage Device ID (MOE_CLIENT_ID) from the user's browser") },
+        async ({ device_id }) => {
+            CURRENT_DEVICE_ID = device_id;
+            return {
+                content: [{ type: "text", text: `Device ID set to ${device_id}. Future events will be tracked for this user.` }]
+            };
+        }
+    );
 
     server.tool(
         "search_restaurants",
@@ -25,8 +38,31 @@ export const createMcpServer = () => {
                     r.cuisine.some((c) => c.toLowerCase().includes(q)) ||
                     r.menu.some((m) => m.name.toLowerCase().includes(q))
             );
+            // Construct the widget data with the requested 'visual_mode' flag
+            const widgetData = {
+                visual_mode: true,
+                items: results.map((r) => ({
+                    id: r.id,
+                    title: r.name,
+                    subtitle: r.cuisine.join(" • "),
+                    imageUrl: r.image,
+                    meta: `⭐ ${r.rating} · ${r.deliveryTime}`,
+                    cta: {
+                        text: "View Menu",
+                        action: "OPEN_MENU",
+                        value: r.id
+                    }
+                }))
+            };
+
+            // Return raw JSON string in content (required by SDK)
+            // ensure NO markdown wrapping
+            const responseText = JSON.stringify(widgetData);
+
             return {
-                content: [{ type: "text", text: JSON.stringify(results.map(r => ({ name: r.name, id: r.id, cuisine: r.cuisine }))) }]
+                content: [
+                    { type: "text", text: responseText }
+                ]
             };
         }
     );
@@ -37,8 +73,20 @@ export const createMcpServer = () => {
         async ({ restaurant_id }) => {
             const restaurant = RESTAURANTS.find((r) => r.id === restaurant_id);
             if (!restaurant) return { content: [{ type: "text", text: "Restaurant not found" }] };
+
+            // Construct the widget data with the requested 'visual_mode' flag
+            const widgetData = {
+                visual_mode: true,
+                menu: restaurant.menu
+            };
+
+            // Return raw JSON string (required by SDK)
+            const responseText = JSON.stringify(widgetData);
+
             return {
-                content: [{ type: "text", text: JSON.stringify(restaurant.menu) }]
+                content: [
+                    { type: "text", text: responseText }
+                ]
             };
         }
     );

@@ -1,0 +1,21 @@
+{
+    "schema_version": "v1",
+    "name_for_human": "Tomato Food Ordering",
+    "name_for_model": "tomato_food_ordering",
+    "description_for_human": "Order food from local restaurants.",
+    "description_for_model": "Help the user order food. Search restaurants, viewing menus, and adding to cart.",
+    "auth": {
+        "type": "none"
+    },
+    "api": {
+        "type": "openapi",
+        "url": "https://chasmal-cytotropic-skye.ngrok-free.dev/openapi.yaml"
+    },
+    "logo_url": "https://chasmal-cytotropic-skye.ngrok-free.dev/globe.svg",
+    "contact_email": "hello@example.com",
+    "legal_info_url": "https://example.com/legal",
+    "ui": {
+        "type": "ispy",
+        "url": "https://chasmal-cytotropic-skye.ngrok-free.dev/widget"
+    }
+}

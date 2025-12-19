@@ -1,12 +1,13 @@
 import moengage from "@moengage/web-sdk";
 
-export const MOENGAGE_APP_ID = "YOUR_MOENGAGE_APP_ID"; // Replace with actual App ID
+export const MOENGAGE_APP_ID = "TEST_MOENGAGE_KEY"; // Replace with actual App ID
 
 export const initMoEngage = () => {
     moengage.initialize({
         app_id: MOENGAGE_APP_ID,
-        debug_logs: 1, // Enable for dev
+        debug_logs: 0, // Enable for dev
         cluster: "DC_1", // Default cluster, adjust if needed
+        // disable_onsite: true,
     });
 };
 
@@ -27,4 +28,17 @@ export const AnalyticsEvents = {
     CHECKOUT_STARTED: "checkout_started",
     ORDER_PLACED: "order_placed",
     SEARCH: "search",
+};
+
+export const getDeviceId = () => {
+    if (typeof document !== "undefined") {
+        const match = document.cookie.match(new RegExp("(^| )MOE_CLIENT_ID=([^;]+)"));
+        if (match) {
+            const deviceId = match[2];
+            console.log("[MoEngage] Device ID (MOE_CLIENT_ID):", deviceId);
+            return deviceId;
+        }
+    }
+    console.warn("[MoEngage] Device ID not found in cookies");
+    return null;
 };
